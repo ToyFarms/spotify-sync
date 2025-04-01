@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import "./LoginPage";
 import { Separator } from "@/components/ui/separator";
-import PasswordInput from "@/components/PasswordInput";
+import { PasswordInput } from "@/components/GeneralInput";
 import {
   Tooltip,
   TooltipContent,
@@ -56,7 +56,7 @@ function Field<
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <PasswordInput {...field} />
+            <PasswordInput {...field} storageKey={name} />
           </FormControl>
           <FormDescription>{desc}</FormDescription>
           <FormMessage />
