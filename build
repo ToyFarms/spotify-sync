@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -xe
+
+tsc -b
+pnpm vite build
+node backend/bake.js dist/baked.ts
+tsc -p tsconfig.build.json --outDir dist
+pnpm tsc-alias -p tsconfig.build.json --outDir .
+pnpm tsc-alias -p tsconfig.build.json --outDir dist
+pkg dist/dist/baked.js --targets node20-linux-x64 --public -o dist/spotify_sync

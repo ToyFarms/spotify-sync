@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "generated/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model RemoteTrack {
+  id           Int          @id @unique @default(autoincrement())
+  name         String
+  track_id     String
+  popularity   Int
+  duration_ms  Int
+  release_date String
+  images       String
+  artists      String
+  LocalTrack   LocalTrack[]
+}
+
+model LocalTrack {
+  id           Int          @id @unique @default(autoincrement())
+  path         String       @unique
+  track_pos    Int          @unique
+  remote       Int?
+  remote_track RemoteTrack? @relation(fields: [remote], references: [id], onDelete: SetNull)
+  synced       Boolean      @default(false)
+  ignore       Boolean      @default(false)
+}

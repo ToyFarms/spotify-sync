@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "paths": {
+      "@/*": ["./frontend/*"],
+      "@lib/*": ["./lib/*"],
+      "@@/*": ["./*"]
+    }
+  },
+  "include": ["dist/baked.ts", "lib/**/*.ts"]
+}
