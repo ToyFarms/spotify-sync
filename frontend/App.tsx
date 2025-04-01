@@ -12,7 +12,7 @@ export default function App() {
     : "light";
 
   return (
-    <ThemeProvider defaultTheme={theme} storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme={theme} storageKey="app-theme">
       <div className="flex flex-col min-h-screen">
         <NavBar />
         <div className="flex flex-grow justify-center">

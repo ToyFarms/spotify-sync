@@ -17,7 +17,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export default function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "vite-ui-theme",
+  storageKey = "app-theme",
   ...props
 }: {
   children: React.ReactNode;
