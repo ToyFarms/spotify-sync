@@ -2,10 +2,28 @@
 
 set -xe
 
+node_version=$(node -v | awk -F'.' '{print substr($1, 2)}')
+
 tsc -b
 pnpm vite build
 node backend/bake.js dist/baked.ts
 tsc -p tsconfig.build.json --outDir dist
 pnpm tsc-alias -p tsconfig.build.json --outDir .
 pnpm tsc-alias -p tsconfig.build.json --outDir dist
-pkg dist/dist/baked.js --targets node20-linux-x64 --public -o dist/spotify_sync
+
+declare -A targets
+targets=(
+  ["linux-x64"]="linux-x86_64"
+  ["macos-x64"]="macos-x86_64"
+  ["win-x64"]="win-x86_64"
+)
+
+if [[ $1 = "all" ]]; then
+    for target in "${!targets[@]}"; do
+        name="${targets[$target]}"
+        pkg dist/dist/baked.js --targets node$node_version-$target --public -o dist/spotify_sync.$name
+    done
+else
+    pkg dist/dist/baked.js --targets node$node_version-linux-x64 --public -o dist/spotify_sync-linux.x86_64
+fi
+
