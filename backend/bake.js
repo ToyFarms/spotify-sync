@@ -12,7 +12,9 @@ const template = readFileSync("backend/server.ts", "utf8");
 
 writeFileSync(
   outputPath,
-  `global._BAKED_HTML_CONTENT = ${JSON.stringify(html)};${os.EOL}${template}`,
+  `global._BAKED_HTML_CONTENT = ${JSON.stringify(html)};${os.EOL}` +
+    `global.in_prod = true;${os.EOL}` +
+    `${template}`,
   "utf8",
 );
 console.log(`Baked index.html into ${outputPath}`);
