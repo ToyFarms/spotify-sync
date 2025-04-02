@@ -13,5 +13,5 @@
       "@lib/*": ["../lib/*"]
     }
   },
-  "include": ["../vite.config.ts", "./**/*.ts", "../lib/**/*.ts"]
+  "include": ["./**/*.ts", "../lib/**/*.ts"]
 }

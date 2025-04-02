@@ -100,7 +100,6 @@ export default function LoginPage() {
       }
     } catch (e) {
       toast.error(`${e}`, { description: "Make sure the server is running" });
-      return;
     }
   }
 
