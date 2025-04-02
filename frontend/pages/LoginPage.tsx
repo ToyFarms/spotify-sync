@@ -82,20 +82,25 @@ export default function LoginPage() {
   }, [formValues]);
 
   async function onSubmit(values: z.infer<typeof LoginSchema>) {
-    const res = await fetch("http://127.0.0.1:6061/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-
-    if (res.status === 200) {
-      toast.success("Login Successfull!");
-    } else {
-      toast.error(`Failed to Login ${res.status}`, {
-        description: (await res.json())?.error,
+    try {
+      const res = await fetch("http://127.0.0.1:6061/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
       });
+
+      if (res.status === 200) {
+        toast.success("Login Successfull!");
+      } else {
+        toast.error(`Failed to Login ${res.status}`, {
+          description: (await res.json())?.error,
+        });
+      }
+    } catch (e) {
+      toast.error(`${e}`, { description: "Make sure the server is running" });
+      return;
     }
   }
 
