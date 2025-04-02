@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.base",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@lib/*": ["../lib/*"]
+    }
+  },
+  "include": ["./**/*.tsx", "./lib/**/*.ts", "../lib/**/*.ts"]
+}

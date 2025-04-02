@@ -1,11 +1,18 @@
 {
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "commonjs",
+    "baseUrl": ".",
     "esModuleInterop": true,
+    "noEmit": false,
+    "composite": true,
+    "skipLibCheck": true,
     "paths": {
-      "@/*": ["./frontend/*"],
+      "@/*": ["./backend/*"],
       "@lib/*": ["./lib/*"],
       "@@/*": ["./*"]
     }
   },
-  "include": ["dist/baked.ts", "lib/**/*.ts"]
+  "include": ["dist/baked.ts", "lib/**/*.ts", "backend/**/*.ts"]
 }

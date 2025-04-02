@@ -1,21 +1,21 @@
 import express from "express";
-import startApiServer from "@@/backend/api";
+import startApiServer from "@/api";
 
-const g = global as typeof global & {
-  _BAKED_HTML_CONTENT: string;
-  in_prod?: boolean;
-};
+declare global {
+  var _BAKED_HTML_CONTENT: string;
+  var in_prod: boolean;
+}
 
 // in dev the file is served by vite
-if (g.in_prod) {
+if (global.in_prod) {
   const app = express();
-  const WEB_PORT = process.env.WEB_PORT || 6060;
+  const WEB_PORT = parseInt(process.env.WEB_PORT || "") || 6060;
 
   app.get("*", (_, res) => {
-    if (!g._BAKED_HTML_CONTENT) {
+    if (!global._BAKED_HTML_CONTENT) {
       res.status(500).send("There should be HTML here, but there's none.");
     } else {
-      res.send(g._BAKED_HTML_CONTENT);
+      res.send(global._BAKED_HTML_CONTENT);
     }
   });
 
@@ -24,4 +24,4 @@ if (g.in_prod) {
   });
 }
 
-startApiServer(!!g.in_prod);
+startApiServer(!!global.in_prod);

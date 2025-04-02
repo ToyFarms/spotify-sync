@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.base",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+
+    "baseUrl": ".",
+    "esModuleInterop": true,
+
+    "paths": {
+      "@/*": ["./*"],
+      "@lib/*": ["../lib/*"]
+    }
+  },
+  "include": ["../vite.config.ts", "./**/*.ts", "../lib/**/*.ts"]
+}

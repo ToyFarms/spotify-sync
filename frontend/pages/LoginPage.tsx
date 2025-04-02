@@ -4,6 +4,7 @@ import {
   FieldValues,
   Path,
   useForm,
+  useWatch,
 } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,12 +28,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
-
-const formSchema = z.object({
-  spClientID: z.string(),
-  spClientSecret: z.string(),
-  acoustKey: z.string().optional(),
-});
+import { LoginSchema } from "@lib/login";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { AlertTriangle, LoaderCircle } from "lucide-react";
+import { fromError } from "zod-validation-error";
 
 function Field<
   TFieldValues extends FieldValues = FieldValues,
@@ -56,7 +56,7 @@ function Field<
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <PasswordInput {...field} storageKey={name} />
+            <PasswordInput {...field} />
           </FormControl>
           <FormDescription>{desc}</FormDescription>
           <FormMessage />
@@ -67,16 +67,43 @@ function Field<
 }
 
 export default function LoginPage() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const STORAGE_KEY = "LOGIN_DATA";
+  const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {};
+
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: { ...savedData },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  const formValues = useWatch({ control: form.control });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(formValues));
+  }, [formValues]);
+
+  async function onSubmit(values: z.infer<typeof LoginSchema>) {
+    const res = await fetch("http://127.0.0.1:6061/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (res.status === 200) {
+      toast.success("Login Successfull!");
+    } else {
+      toast.error(`Failed to Login ${res.status}`, {
+        description: (await res.json())?.error,
+      });
+    }
   }
 
   return (
-    <div className="flex items-center justify-center self-center w-full">
+    <fieldset
+      className="flex items-center justify-center self-center w-full"
+      disabled={form.formState.isSubmitting}
+    >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -92,6 +119,7 @@ export default function LoginPage() {
                 <Link
                   to="https://developer.spotify.com/dashboard"
                   target="_blank"
+                  className="underline"
                 >
                   Spotify Dashboard
                 </Link>
@@ -108,6 +136,7 @@ export default function LoginPage() {
                 <Link
                   to="https://developer.spotify.com/dashboard"
                   target="_blank"
+                  className="underline"
                 >
                   Spotify Dashboard
                 </Link>
@@ -121,18 +150,26 @@ export default function LoginPage() {
             desc={
               <>
                 Get from{" "}
-                <Link to="https://acoustid.org/my-applications" target="_blank">
+                <Link
+                  to="https://acoustid.org/my-applications"
+                  target="_blank"
+                  className="underline"
+                >
                   AcoustID's Website
                 </Link>
               </>
             }
           />
           <Separator />
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row gap-2 items-center">
             <TooltipProvider>
               <Tooltip delayDuration={500}>
                 <TooltipTrigger asChild>
-                  <Button className="cursor-pointer" type="submit">
+                  <Button
+                    className="cursor-pointer"
+                    type="submit"
+                    disabled={form.formState.isSubmitting}
+                  >
                     Login
                   </Button>
                 </TooltipTrigger>
@@ -142,21 +179,29 @@ export default function LoginPage() {
               </Tooltip>
               <Tooltip delayDuration={500}>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" className="cursor-pointer">
+                  <Button
+                    variant="ghost"
+                    className="cursor-pointer"
+                    disabled={form.formState.isSubmitting}
+                  >
                     Update
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>
-                    Update the backend credential without calling the login
-                    service
-                  </p>
+                  Update the backend credential without calling the login
+                  service
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            {!form.formState.isValid && (
+              <AlertTriangle className="text-amber-500" size={20} />
+            )}
+            {form.formState.isSubmitting && (
+              <LoaderCircle className="animate-spin" />
+            )}
           </div>
         </form>
       </Form>
-    </div>
+    </fieldset>
   );
 }

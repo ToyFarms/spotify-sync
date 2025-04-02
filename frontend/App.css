@@ -30,8 +30,16 @@
   border: 3px solid #f1f1f1;
 }
 
-a {
-  text-decoration: underline;
+.tab-link {
+  min-width: 5rem;
+}
+
+.text-secondary {
+  color: rgb(60, 60, 60);
+}
+
+.dark .text-secondary {
+  color: gray;
 }
 
 @tailwind base;

@@ -5,6 +5,7 @@ import LoginPage from "@/pages/LoginPage";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import "@/App.css";
+import { Toaster } from "@/components/Toaster";
 
 export default function App() {
   const theme = window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -23,6 +24,7 @@ export default function App() {
         </div>
       </div>
       <Footer />
+      <Toaster />
     </ThemeProvider>
   );
 }

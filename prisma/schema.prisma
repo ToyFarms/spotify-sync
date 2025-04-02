@@ -30,3 +30,8 @@ model LocalTrack {
   synced       Boolean      @default(false)
   ignore       Boolean      @default(false)
 }
+
+model AppState {
+  id      Int    @id @unique @default(autoincrement())
+  storage String @default("{}")
+}

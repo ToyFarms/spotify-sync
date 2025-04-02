@@ -4,7 +4,7 @@ set -xe
 
 node_version=$(node -v | awk -F'.' '{print substr($1, 2)}')
 
-tsc -b
+# tsc -b
 pnpm vite build
 node backend/bake.js dist/baked.ts
 tsc -p tsconfig.build.json --outDir dist
