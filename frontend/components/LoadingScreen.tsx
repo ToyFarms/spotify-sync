@@ -1,23 +1,41 @@
-import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { isServerRunning } from "@/lib/utils";
+import { cn, isServerRunning } from "@/lib/utils";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogOverlay,
+  DialogPortal,
   DialogTitle,
 } from "@/components/ui/dialog";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Input } from "@/components/ui/input";
 import useLocalStorage from "use-local-storage";
 import useCircularBuffer from "@/hooks/circularHook";
 
-export default function LoadingScreen({
-  onDone: callback,
-}: {
-  onDone: () => any;
-}) {
+function DialogContentNoClose({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Content>) {
+  return (
+    <DialogPortal data-slot="dialog-portal">
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        data-slot="dialog-content"
+        className={cn(
+          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  );
+}
+
+export default function LoadingScreen() {
   const [dialog, setDialog] = useState(false);
   const [url, setUrl] = useLocalStorage("server-url", "http://127.0.0.1:6061");
 
@@ -35,7 +53,6 @@ export default function LoadingScreen({
 
       const running = await isServerRunning(`${url}/api/ping`);
       if (running) {
-        callback();
         setDialog(false);
         return;
       }
@@ -58,7 +75,7 @@ export default function LoadingScreen({
 
   return (
     <Dialog open={dialog}>
-      <DialogContent className="max-w-[40rem]">
+      <DialogContentNoClose className="max-w-[40rem] outline-none">
         <DialogHeader>Config</DialogHeader>
         <DialogTitle>Server URL</DialogTitle>
         <div className="flex items-center space-x-2">
@@ -77,14 +94,14 @@ export default function LoadingScreen({
             <div>
               {statuses.map((s, i) => (
                 <p
-                  key={`${s}${i}`}
+                  key={`${i}${s}${statuses}`}
                   style={{
                     opacity: `${0.9 - i / STATUS_CAP}`,
                   }}
-                  className={`text-center ${
+                  className={`text-center transition-opacity transition-duration-1000 ${
                     i === 0
-                      ? "motion-translate-y-in-50 motion-opacity-in-20"
-                      : ""
+                      ? "-motion-translate-y-in-100 motion-opacity-in-20 motion-scale-in-80"
+                      : "-motion-translate-y-in-100"
                   }`}
                 >
                   {s}
@@ -93,7 +110,7 @@ export default function LoadingScreen({
             </div>
           </div>
         </DialogFooter>
-      </DialogContent>
+      </DialogContentNoClose>
     </Dialog>
   );
 }
